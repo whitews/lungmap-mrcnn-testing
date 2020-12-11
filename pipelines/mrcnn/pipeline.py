@@ -90,16 +90,21 @@ class MrCNNPipeline(BasePipeline):
             if not os.path.exists(model_weights):
                 download_trained_weights(model_weights)
 
-        self.model.load_weights(
-            model_weights,
-            by_name=True,
-            exclude=[
-                "mrcnn_class_logits",
-                "mrcnn_bbox_fc",
-                "mrcnn_bbox",
-                "mrcnn_mask"
-            ]
-        )
+            self.model.load_weights(
+                model_weights,
+                by_name=True,
+                exclude=[
+                    "mrcnn_class_logits",
+                    "mrcnn_bbox_fc",
+                    "mrcnn_bbox",
+                    "mrcnn_mask"
+                ]
+            )
+        else:
+            self.model.load_weights(
+                model_weights,
+                by_name=True
+            )
         self.model.train(
             self.dataset_train,
             self.dataset_validation,
