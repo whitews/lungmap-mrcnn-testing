@@ -422,7 +422,7 @@ class PyramidROIAlign(KL.Layer):
             # Keep track of which box is mapped to which level
             box_to_level.append(ix)
 
-            # Stop gradient propogation to ROI proposals
+            # Stop gradient propagation to ROI proposals
             level_boxes = tf.stop_gradient(level_boxes)
             box_indices = tf.stop_gradient(box_indices)
 
@@ -1897,7 +1897,7 @@ class MaskRCNN(object):
             _, C2, C3, C4, C5 = resnet_graph(input_image, config.BACKBONE,
                                              stage5=True, train_bn=config.TRAIN_BN)
         # Top-down Layers
-        # TODO: add assert to varify feature map sizes match what's in config
+        # TODO: add assert to verify feature map sizes match what's in config
         P5 = KL.Conv2D(config.TOP_DOWN_PYRAMID_SIZE, (1, 1), name='fpn_c5p5')(C5)
         P4 = KL.Add(name="fpn_p4add")([
             KL.UpSampling2D(size=(2, 2), name="fpn_p5upsampled")(P5),
