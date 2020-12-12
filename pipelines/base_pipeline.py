@@ -51,47 +51,6 @@ class BasePipeline(object):
             fp
         )
 
-        # add ground truth label to processed test data frame
-        # only valid for true positives and false positives
-        # (the missed items have no corresponding test region)
-        self.test_data_processed['true_label'] = ''
-        for struct_class, struct_dict in results.items():
-            for res_dict in struct_dict['fp']:
-                overlaps = utils.find_overlapping_regions(
-                    self.training_data[self.test_img_name],
-                    [self.test_results[res_dict['test_ind']]]
-                )['overlaps']
-
-                if len(overlaps) > 0:
-                    match = overlaps[list(overlaps.keys())[0]]
-                    true_label = match['true_label']
-                else:
-                    true_label = ''
-
-                self.test_data_processed.set_value(
-                    res_dict['test_ind'],
-                    'true_label',
-                    true_label
-                )
-                self.test_data_processed.set_value(
-                    res_dict['test_ind'],
-                    'iou',
-                    res_dict['iou']
-                )
-            for res_dict in struct_dict['tp']:
-                if 'gt_ind' in res_dict:
-                    continue
-                self.test_data_processed.set_value(
-                    res_dict['test_ind'],
-                    'true_label',
-                    struct_class
-                )
-                self.test_data_processed.set_value(
-                    res_dict['test_ind'],
-                    'iou',
-                    res_dict['iou']
-                )
-
         self.report = results
 
         return df
