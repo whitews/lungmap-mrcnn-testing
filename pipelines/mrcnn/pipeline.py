@@ -115,13 +115,6 @@ class MrCNNPipeline(BasePipeline):
             epochs=30,
             layers='heads'
         )
-        # self.model.train(
-        #     self.dataset_train,
-        #     self.dataset_validation,
-        #     learning_rate=self.configconfig.LEARNING_RATE / 10,
-        #     epochs=2,
-        #     layers="all"
-        # )
 
     def _convert_to_contours(self, maskrcnn_dict):
         """
