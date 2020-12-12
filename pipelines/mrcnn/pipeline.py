@@ -136,7 +136,7 @@ class MrCNNPipeline(BasePipeline):
         for i in range(masks.shape[2]):
             instance = {'prob': {class_names[i]: probs[i]}}
             image_8bit = np.uint8(masks[:, :, i].astype('int'))
-            _, contours, hierarchy = cv2.findContours(
+            contours, hierarchy = cv2.findContours(
                 image_8bit,
                 cv2.RETR_LIST,
                 cv2.CHAIN_APPROX_SIMPLE
@@ -163,5 +163,8 @@ class MrCNNPipeline(BasePipeline):
 
         results = model.detect([img], verbose=1)
         r = results[0]
+
+        self.test_results = self._convert_to_contours(results)
+
         visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'],
                                     self.dataset_train.class_names, r['scores'])
