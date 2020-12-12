@@ -40,12 +40,15 @@ class LungMapTrainingConfig(Config):
     VALIDATION_STEPS = 5
 
 
-config = LungMapTrainingConfig()
+DEFAULT_CONFIG = LungMapTrainingConfig()
 
 
 class MrCNNPipeline(BasePipeline):
-    def __init__(self, image_set_dir, val_img_name, test_img_name, model_dir='tmp/models/mrcnn'):
+    def __init__(self, image_set_dir, val_img_name, test_img_name, model_dir='tmp/models/mrcnn', config=DEFAULT_CONFIG):
         super(MrCNNPipeline, self).__init__(image_set_dir, test_img_name)
+
+
+        self.config = config
 
         # TODO: make sure there are enough images in the image set, as this pipeline
         #       needs to separate an image for validation, in addition to the reserved test image.
@@ -72,7 +75,7 @@ class MrCNNPipeline(BasePipeline):
 
         self.model = modellib.MaskRCNN(
             mode="training",
-            config=config,
+            config=self.config,
             model_dir=self.model_dir
         )
 
@@ -108,14 +111,14 @@ class MrCNNPipeline(BasePipeline):
         self.model.train(
             self.dataset_train,
             self.dataset_validation,
-            learning_rate=config.LEARNING_RATE,
+            learning_rate=self.config.LEARNING_RATE,
             epochs=30,
             layers='heads'
         )
         # self.model.train(
         #     self.dataset_train,
         #     self.dataset_validation,
-        #     learning_rate=config.LEARNING_RATE / 10,
+        #     learning_rate=self.configconfig.LEARNING_RATE / 10,
         #     epochs=2,
         #     layers="all"
         # )
@@ -150,7 +153,7 @@ class MrCNNPipeline(BasePipeline):
         img = self.dataset_test.image_info[0]['img']
         model = modellib.MaskRCNN(
             mode="inference",
-            config=config,
+            config=self.config,
             model_dir=self.model_dir
         )
         model.load_weights(
